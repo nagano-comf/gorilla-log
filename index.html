@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GORILLA LOG</title>
+<meta name="description" content="45歳経営者の筋トレ・フットサル記録。週1ジム、週末フットサル、自宅トレをゴリラレベルで採点する公開ダッシュボード。">
+<link rel="canonical" href="https://nagano-comf.github.io/gorilla-log/">
+<meta property="og:site_name" content="GORILLA LOG">
+<meta property="og:title" content="GORILLA LOG">
+<meta property="og:description" content="45歳経営者の筋トレ・フットサル記録。週1ジム、週末フットサル、自宅トレをゴリラレベルで採点中。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://nagano-comf.github.io/gorilla-log/">
+<meta property="og:image" content="https://nagano-comf.github.io/gorilla-log/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GORILLA LOG">
+<meta name="twitter:description" content="45歳経営者の筋トレ・フットサル記録。ゴリラレベルで採点中。">
+<meta name="twitter:image" content="https://nagano-comf.github.io/gorilla-log/og-image.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A6%8D%3C/text%3E%3C/svg%3E">
+<!-- Google Analytics 4: 測定IDを入れると計測が始まる（空のままなら何も読み込まない） -->
+<script>
+  window.GA_MEASUREMENT_ID = "";
+  (function(id){ if(!id) return;
+    var s=document.createElement("script"); s.async=true; s.src="https://www.googletagmanager.com/gtag/js?id="+id; document.head.appendChild(s);
+    window.dataLayer=window.dataLayer||[]; function gtag(){dataLayer.push(arguments);} window.gtag=gtag;
+    gtag("js",new Date()); gtag("config",id);
+  })(window.GA_MEASUREMENT_ID);
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+:root{
+  color-scheme: light;
+  --page:#eef0ea; --surface:#fbfcf9; --surface-2:#f3f5f0;
+  --ink:#161a17; --ink-2:#4f5a53; --muted:#7e8a82;
+  --hair:#dde2db; --border:rgba(22,26,23,.12);
+  --accent:#176b3a; --accent-ink:#0f4f2a; --accent-wash:rgba(23,107,58,.10);
+  --gym:#2a78d6; --futsal:#008300; --home:#eda100;
+  --gym-wash:rgba(42,120,214,.12); --futsal-wash:rgba(0,131,0,.12); --home-wash:rgba(237,161,0,.16);
+  --meter-track:#d9dfd7;
+  --shadow:0 1px 2px rgba(22,26,23,.06), 0 8px 24px -16px rgba(22,26,23,.25);
+  --display:"Dela Gothic One", "Zen Kaku Gothic New", system-ui, sans-serif;
+  --body:"Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Yu Gothic", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --page:#121714; --surface:#1c221e; --surface-2:#232a25;
+    --ink:#f1f4ef; --ink-2:#b9c2bb; --muted:#8b958e;
+    --hair:#2b332d; --border:rgba(241,244,239,.12);
+    --accent:#5fc98a; --accent-ink:#8fe0ad; --accent-wash:rgba(95,201,138,.14);
+    --gym:#3987e5; --futsal:#008300; --home:#c98500;
+    --gym-wash:rgba(57,135,229,.18); --futsal-wash:rgba(0,131,0,.22); --home-wash:rgba(201,133,0,.22);
+    --meter-track:#2f3a33;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -16px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --page:#121714; --surface:#1c221e; --surface-2:#232a25;
+  --ink:#f1f4ef; --ink-2:#b9c2bb; --muted:#8b958e;
+  --hair:#2b332d; --border:rgba(241,244,239,.12);
+  --accent:#5fc98a; --accent-ink:#8fe0ad; --accent-wash:rgba(95,201,138,.14);
+  --gym:#3987e5; --futsal:#008300; --home:#c98500;
+  --gym-wash:rgba(57,135,229,.18); --futsal-wash:rgba(0,131,0,.22); --home-wash:rgba(201,133,0,.22);
+  --meter-track:#2f3a33;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -16px rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--page); color:var(--ink);
+  font-family:var(--body); font-size:15px; line-height:1.7;
+  padding-inline:clamp(16px, 4vw, 40px); padding-block:0 64px;
+}
+a{color:var(--accent-ink)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.wrap{max-width:1120px; margin-inline:auto}
+h1,h2,h3{margin:0; text-wrap:balance; line-height:1.25}
+h2{font-family:var(--display); font-size:clamp(20px,2.6vw,26px); font-weight:400; letter-spacing:.01em}
+h3{font-size:16px; font-weight:700}
+p{margin:0}
+.eyebrow{font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:700}
+.num{font-variant-numeric:tabular-nums}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+
+/* masthead */
+.mast{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  padding-block:22px 14px; border-bottom:2px solid var(--ink)}
+.brand{font-family:var(--display); font-size:clamp(28px,5vw,44px); letter-spacing:.02em; line-height:1}
+.brand small{display:block; font-family:var(--body); font-size:13px; font-weight:500; letter-spacing:0; color:var(--ink-2); margin-top:6px}
+.mast-meta{display:flex; gap:14px; align-items:center; flex-wrap:wrap; font-size:13px; color:var(--ink-2)}
+.pill{display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; border:1px solid var(--border); background:var(--surface); font-size:12.5px; font-weight:500; color:var(--ink-2)}
+.pill .dot{width:8px; height:8px; border-radius:50%; background:var(--accent)}
+.theme-btn{font:inherit; font-size:12.5px; padding:4px 10px; border-radius:999px; border:1px solid var(--border); background:var(--surface); color:var(--ink-2); cursor:pointer}
+.theme-btn:hover{background:var(--surface-2)}
+
+/* hero */
+.hero{display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:24px; align-items:stretch; padding-block:28px 8px}
+.hero-main{display:flex; flex-direction:column; gap:10px; justify-content:center}
+.hero-lv{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap}
+.hero-lv .big{font-family:var(--display); font-size:clamp(56px,9vw,96px); line-height:1; letter-spacing:.01em}
+.hero-lv .big sup{font-size:.32em; vertical-align:top; position:relative; top:.4em; color:var(--muted); font-family:var(--body); font-weight:700}
+.hero-title{font-family:var(--display); font-size:clamp(22px,3.4vw,34px); line-height:1.2}
+.hero-note{color:var(--ink-2); max-width:56ch}
+.meter{display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-top:8px; max-width:420px}
+.meter span{height:12px; border-radius:3px; background:var(--meter-track); position:relative; overflow:hidden}
+.meter span i{position:absolute; inset:0; width:var(--fill,0%); background:var(--accent); border-radius:3px}
+.meter-cap{display:flex; justify-content:space-between; font-size:11px; color:var(--muted); max-width:420px}
+.hero-side{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px 20px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:10px}
+.hero-side .who{display:flex; gap:14px; align-items:center}
+.avatar{width:56px; height:56px; border-radius:50%; background:var(--accent-wash); display:grid; place-items:center; font-size:30px; flex:none}
+.who-name{font-family:var(--display); font-size:20px}
+.who-role{font-size:13px; color:var(--ink-2)}
+.hero-side .lead{font-size:14px; color:var(--ink-2)}
+.facts{display:grid; grid-template-columns:auto 1fr; gap:4px 14px; font-size:13.5px; margin:0}
+.facts dt{color:var(--muted); font-weight:500; white-space:nowrap}
+.facts dd{margin:0; font-weight:500}
+
+/* stat tiles */
+.tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; padding-block:18px 6px}
+.tile{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 16px 12px; display:flex; flex-direction:column; gap:2px; min-width:0}
+.tile .label{font-size:12.5px; color:var(--ink-2); font-weight:500}
+.tile .value{font-size:30px; font-weight:700; line-height:1.15; letter-spacing:-.01em}
+.tile .value small{font-size:14px; font-weight:500; color:var(--ink-2); margin-left:2px}
+.tile .sub{font-size:12px; color:var(--muted)}
+.tile.gym{border-top:3px solid var(--gym)} .tile.futsal{border-top:3px solid var(--futsal)} .tile.home{border-top:3px solid var(--home)}
+
+/* sections */
+section{padding-block:30px 6px}
+.sec-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px}
+.sec-head p{color:var(--ink-2); font-size:14px; max-width:64ch}
+.grid-2{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr)); gap:16px}
+.card{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px 20px; min-width:0}
+.card-head{display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:6px}
+.card-head h3{font-size:15.5px}
+.card-head .sub{font-size:12.5px; color:var(--muted)}
+.btn-ghost{font:inherit; font-size:12px; padding:3px 9px; border-radius:6px; border:1px solid var(--border); background:transparent; color:var(--ink-2); cursor:pointer}
+.btn-ghost:hover{background:var(--surface-2)}
+.btn-ghost[aria-pressed="true"]{background:var(--accent-wash); color:var(--accent-ink); border-color:transparent}
+
+/* legend */
+.legend{display:flex; gap:14px; flex-wrap:wrap; font-size:12.5px; color:var(--ink-2); margin:4px 0 6px}
+.legend span{display:inline-flex; align-items:center; gap:6px}
+.sw{width:10px; height:10px; border-radius:50%; flex:none}
+.sw.ring{background:transparent; border:2px solid var(--gym); width:9px; height:9px}
+.sw.sq{border-radius:2px}
+.sw.gym{background:var(--gym)} .sw.futsal{background:var(--futsal)} .sw.home{background:var(--home)}
+
+/* chart */
+.chart{position:relative}
+.chart svg{display:block; width:100%; height:auto; overflow:visible}
+.chart text{font-family:var(--body); fill:var(--muted); font-size:11px}
+.chart .grid line{stroke:var(--hair); stroke-width:1}
+.chart .axis line{stroke:var(--hair); stroke-width:1}
+.chart .lbl{fill:var(--ink-2); font-size:11.5px; font-weight:700}
+.chart .hit{fill:transparent; cursor:pointer}
+.tip{position:absolute; pointer-events:none; z-index:5; background:var(--ink); color:var(--page); font-size:12px; line-height:1.45; padding:7px 10px; border-radius:8px; box-shadow:var(--shadow); max-width:240px; opacity:0; transform:translate(-50%,-100%) translateY(-10px); transition:opacity .12s}
+.tip.on{opacity:1}
+.tip b{display:block; font-weight:700}
+.tip small{opacity:.75}
+.chart-table{display:none; overflow-x:auto}
+.chart-table.on{display:block}
+.chart.table-on svg, .chart.table-on .legend{display:none}
+table{border-collapse:collapse; width:100%; font-size:13px}
+th,td{text-align:left; padding:6px 8px; border-bottom:1px solid var(--hair); vertical-align:top}
+th{color:var(--muted); font-weight:500; font-size:12px}
+td.r,th.r{text-align:right}
+
+/* calendar */
+.cal{display:grid; grid-template-columns:auto repeat(7,clamp(26px,6.5vw,36px)); gap:4px; font-size:11px; align-items:center; justify-content:start}
+.cal .wk{color:var(--muted); padding-right:6px; white-space:nowrap; text-align:right}
+.cal .dh{color:var(--muted); text-align:center; font-weight:500; padding-bottom:2px}
+.cell{aspect-ratio:1; width:100%; border-radius:5px; background:var(--surface-2); display:grid; place-items:center; font-size:11px; font-weight:700; color:var(--ink); position:relative; cursor:default}
+.cell.gym{background:var(--gym); color:#fff} .cell.futsal{background:var(--futsal); color:#fff} .cell.home{background:var(--home); color:#161a17}
+.cell.est::after{content:""; position:absolute; right:3px; top:3px; width:5px; height:5px; border-radius:50%; background:var(--surface)}
+.cell.future{background:transparent; border:1px dashed var(--hair)}
+.cell.today{outline:2px solid var(--ink); outline-offset:1px}
+.cal-note{font-size:12px; color:var(--muted); margin-top:10px}
+
+/* this week */
+.week-card{display:grid; grid-template-columns:auto 1fr; gap:6px 18px; align-items:center}
+.week-lv{font-family:var(--display); font-size:44px; line-height:1}
+.week-lv small{font-family:var(--body); font-size:12px; color:var(--muted); display:block; font-weight:700; letter-spacing:.08em}
+.week-name{font-family:var(--display); font-size:20px}
+.week-combo{color:var(--ink-2); font-size:14px}
+.strip{display:flex; gap:6px; margin-top:12px; flex-wrap:wrap}
+.strip .day{flex:1 1 0; min-width:40px; border-radius:8px; padding:6px 4px; text-align:center; font-size:11px; background:var(--surface-2); color:var(--muted); line-height:1.3}
+.strip .day b{display:block; font-size:12px; color:var(--ink)}
+.strip .day.gym{background:var(--gym-wash)} .strip .day.futsal{background:var(--futsal-wash)} .strip .day.home{background:var(--home-wash)}
+.strip .day .t{display:block; font-weight:700; color:var(--ink)}
+
+/* records */
+.filters{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px}
+.chip{font:inherit; font-size:13px; padding:5px 12px; border-radius:999px; border:1px solid var(--border); background:var(--surface); color:var(--ink-2); cursor:pointer; display:inline-flex; align-items:center; gap:6px}
+.chip[aria-pressed="true"]{background:var(--ink); color:var(--page); border-color:var(--ink)}
+.chip[aria-pressed="true"] .sw{outline:2px solid var(--page)}
+.rec-list{display:grid; gap:10px}
+.rec{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 16px; display:grid; grid-template-columns:auto 1fr auto; gap:6px 16px; align-items:start; border-left:4px solid var(--hair)}
+.rec.gym{border-left-color:var(--gym)} .rec.futsal{border-left-color:var(--futsal)} .rec.home{border-left-color:var(--home)}
+.rec .date{font-size:12.5px; color:var(--muted); line-height:1.4; min-width:78px}
+.rec .date b{display:block; font-size:15px; color:var(--ink); font-weight:700}
+.rec .date .dow{font-size:11px}
+.rec .main{min-width:0}
+.rec .type{font-size:11px; font-weight:700; letter-spacing:.08em; color:var(--ink-2)}
+.rec .title{font-weight:700; font-size:15px}
+.rec .nick{font-size:13px; color:var(--accent-ink); font-weight:700; margin-top:2px}
+.rec .note{font-size:13.5px; color:var(--ink-2); margin-top:4px}
+.rec .meta{display:flex; gap:8px; flex-wrap:wrap; margin-top:6px}
+.tag{font-size:11.5px; padding:2px 8px; border-radius:6px; background:var(--surface-2); color:var(--ink-2)}
+.rec .lv{text-align:right; min-width:64px}
+.rec .lv b{font-family:var(--display); font-size:24px; line-height:1; display:block}
+.rec .lv small{font-size:11px; color:var(--muted); display:block}
+.rec details{grid-column:2 / -1; margin-top:4px}
+.rec summary{font-size:12.5px; color:var(--muted); cursor:pointer; list-style:none; display:inline-flex; gap:4px; align-items:center}
+.rec summary::before{content:"▸"; font-size:10px}
+.rec details[open] summary::before{content:"▾"}
+.rec details ul{margin:6px 0 0; padding-left:18px; font-size:13px; color:var(--ink-2)}
+.more{display:flex; justify-content:center; margin-top:14px}
+.btn{font:inherit; font-size:13.5px; padding:8px 18px; border-radius:999px; border:1px solid var(--ink); background:transparent; color:var(--ink); cursor:pointer}
+.btn:hover{background:var(--surface-2)}
+
+/* habits, weeks, levels */
+.habit{display:grid; grid-template-columns:1fr auto; gap:4px 14px; align-items:start; padding:12px 0; border-bottom:1px solid var(--hair)}
+.habit:last-child{border-bottom:0}
+.habit h3{font-size:15px}
+.habit .name{font-size:13px; color:var(--accent-ink); font-weight:700}
+.habit p{font-size:13.5px; color:var(--ink-2); grid-column:1}
+.habit .lv{font-family:var(--display); font-size:22px; grid-row:1 / span 3; align-self:center}
+.lv-list{display:grid; gap:0; margin:0; padding:0; list-style:none}
+.lv-list li{display:grid; grid-template-columns:52px 1fr; gap:12px; padding:9px 0; border-bottom:1px solid var(--hair); align-items:baseline}
+.lv-list li:last-child{border-bottom:0}
+.lv-list .k{font-family:var(--display); font-size:17px}
+.lv-list .n{font-weight:700; font-size:14px}
+.lv-list .d{font-size:13px; color:var(--ink-2)}
+
+footer{margin-top:40px; padding-top:18px; border-top:1px solid var(--hair); font-size:12.5px; color:var(--muted); display:grid; gap:6px; max-width:80ch}
+
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr}
+  .rec{grid-template-columns:1fr auto}
+  .rec .date{grid-column:1 / -1; display:flex; gap:8px; align-items:baseline; min-width:0}
+  .rec .date b{font-size:14px}
+  .rec details{grid-column:1 / -1}
+  .week-card{grid-template-columns:1fr}
+  .habit{grid-template-columns:1fr}
+  .habit .lv{grid-row:auto}
+}
+@media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <div class="brand">GORILLA LOG<small id="tagline"></small></div>
+  <div class="mast-meta">
+    <span class="pill"><span class="dot"></span>最終更新 <span id="updated" class="num"></span></span>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="表示テーマを切り替え">テーマ</button>
+  </div>
+</header>
+
+<section class="hero" aria-label="総合判定">
+  <div class="hero-main">
+    <span class="eyebrow">総合判定・現在のゴリラレベル</span>
+    <div class="hero-lv"><span class="big" id="heroLv"></span><span class="hero-title" id="heroTitle"></span></div>
+    <p class="hero-note" id="heroNote"></p>
+    <div class="meter" id="meter" aria-hidden="true"></div>
+    <div class="meter-cap" aria-hidden="true"><span>Lv.1</span><span>Lv.2</span><span>Lv.3</span><span>Lv.4</span><span>Lv.5</span></div>
+  </div>
+  <aside class="hero-side" aria-label="自己紹介">
+    <div class="who">
+      <div class="avatar" aria-hidden="true">🦍</div>
+      <div><div class="who-name" id="pName"></div><div class="who-role" id="pRole"></div></div>
+    </div>
+    <p class="lead" id="pLead"></p>
+    <dl class="facts" id="pFacts"></dl>
+  </aside>
+</section>
+
+<div class="tiles" id="tiles" aria-label="集計"></div>
+
+<section aria-labelledby="h-week">
+  <div class="sec-head"><h2 id="h-week">直近の1週間</h2><p>最新の週判定と、直近7日の動き。</p></div>
+  <div class="grid-2">
+    <div class="card" id="weekCard"></div>
+    <div class="card">
+      <div class="card-head"><h3>直近7日間</h3><span class="sub" id="stripRange"></span></div>
+      <div class="strip" id="strip"></div>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="h-cal">
+  <div class="sec-head"><h2 id="h-cal">活動カレンダー</h2><p>週ごとの運動日。ジ＝ジム、フ＝フットサル、宅＝自宅トレ。右上の小さな点は、曜日から推定した日付。</p></div>
+  <div class="card">
+    <div class="legend"><span><i class="sw sq gym"></i>ジム</span><span><i class="sw sq futsal"></i>フットサル</span><span><i class="sw sq home"></i>自宅トレ</span></div>
+    <div class="cal" id="cal"></div>
+    <p class="cal-note" id="calNote"></p>
+  </div>
+</section>
+
+<section aria-labelledby="h-num">
+  <div class="sec-head"><h2 id="h-num">数字で追える変化</h2><p>使用重量と参加時間の推移。記録がない日を「運動していない日」とは扱わない。</p></div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head"><h3>ベンチプレス メイン重量</h3><button class="btn-ghost" type="button" data-table="benchChart" aria-pressed="false">表で見る</button></div>
+      <div class="legend"><span><i class="sw gym"></i>10回×3セット達成</span><span><i class="sw ring"></i>未達・一部</span></div>
+      <div class="chart" id="benchChart"></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>バーベルスクワット メイン重量</h3><button class="btn-ghost" type="button" data-table="squatChart" aria-pressed="false">表で見る</button></div>
+      <div class="legend"><span><i class="sw gym"></i>10回×3セット</span></div>
+      <div class="chart" id="squatChart"></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>フットサル 月別参加時間</h3><button class="btn-ghost" type="button" data-table="futsalChart" aria-pressed="false">表で見る</button></div>
+      <div class="chart" id="futsalChart"></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>ゴリラレベルの推移</h3><button class="btn-ghost" type="button" data-table="levelChart" aria-pressed="false">表で見る</button></div>
+      <div class="legend"><span><i class="sw gym"></i>ジム</span><span><i class="sw futsal"></i>フットサル</span><span><i class="sw home"></i>自宅トレ</span></div>
+      <div class="chart" id="levelChart"></div>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="h-rec">
+  <div class="sec-head"><h2 id="h-rec">全記録</h2><p>新しい順。「暫定」は数値を画像で確認できていない回。日付の「ごろ」は曜日からの推定。</p></div>
+  <div class="filters" id="filters" role="group" aria-label="種類で絞り込み"></div>
+  <div class="rec-list" id="recList"></div>
+  <div class="more"><button class="btn" id="moreBtn" type="button">すべて表示</button></div>
+</section>
+
+<section aria-labelledby="h-habit">
+  <div class="sec-head"><h2 id="h-habit">継続習慣と週判定</h2><p>単日の最高重量より、長く続けている点への称号。</p></div>
+  <div class="grid-2">
+    <div class="card"><h3 style="margin-bottom:4px">継続習慣</h3><div id="habits"></div></div>
+    <div class="card"><h3 style="margin-bottom:8px">週・期間のゴリラ判定</h3><div style="overflow-x:auto"><table id="weeksTable"></table></div></div>
+  </div>
+</section>
+
+<section aria-labelledby="h-lv">
+  <div class="sec-head"><h2 id="h-lv">ゴリラレベルとは</h2><p>5段階・0.5刻みのユーモラスな評価。医学的指標でも、同年代の上位何％といった統計でもない。</p></div>
+  <div class="grid-2">
+    <div class="card"><ul class="lv-list" id="lvList"></ul></div>
+    <div class="card" id="baselineCard"></div>
+  </div>
+</section>
+
+<footer>
+  <p>このページは本人の運動記録を、分かる数字と分からない数字を分けて公開しているもの。全期間の全運動を網羅した日誌ではない。</p>
+  <p>重量はアプリ・本人発言の表記のまま。片手ダンベルを両手合計に換算せず、片脚・片腕の回数も倍算しない。アプリのRM表示は実測の最大挙上として扱わない。</p>
+  <p>痛みや疲労の記述は本人の感触であり、診断ではない。ゴリラレベルは、痛くても全部やった度ではなく、その回で確認できる内容の印象。</p>
+</footer>
+
+</div>
+<script src="data/records.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
