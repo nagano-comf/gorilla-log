@@ -24,7 +24,10 @@ training_futsal_gorilla/
 ├── index.html            ページ骨組み・CSS・OGP・GA4ローダー   （設計変更時のみ編集）
 ├── app.js                描画ロジック                          （設計変更時のみ編集）
 ├── data/records.js       ★ 記録データ                          （毎週編集）
-├── og-image.png          SNSシェア画像 1200×630                 （たまに作り直す）
+├── og-image.png          SNSシェア画像のフォールバック（通常は Actions が自動生成）
+├── scripts/build-og.js   記録データから OGP 用 HTML を生成
+├── scripts/stamp.js      OGP URL に更新日バージョンを刻印し _site/ を組み立て
+├── .github/workflows/deploy.yml  push → OGP 生成 → 刻印 → Pages デプロイ
 ├── build.js              1ファイル版を dist/ に出力する補助      （任意）
 ├── .nojekyll             GitHub Pages で Jekyll 処理を止める
 ├── .gitignore            dist/ と元アーカイブ md を除外
@@ -176,14 +179,31 @@ OS 設定（`prefers-color-scheme`）に追従。右上「テーマ」で手動�
 
 | 項目 | 内容 |
 |---|---|
-| ホスティング | GitHub Pages（`master` ブランチ、ルート） |
+| ホスティング | GitHub Pages。配信元は GitHub Actions（`build_type: workflow`） |
 | URL | https://nagano-comf.github.io/gorilla-log/ |
-| OGP | `og:url` / `og:image`（`og-image.png` 1200×630）/ `twitter:card` = summary_large_image |
+| デプロイ | `master` へ push → `.github/workflows/deploy.yml` → `_site/` を `actions/deploy-pages` で公開 |
+| OGP 画像 | Actions 内で `scripts/build-og.js` が `data/records.js` から HTML を生成し、Chrome（Noto Sans CJK / Noto Color Emoji）で 1200×630 に描画。失敗時はリポジトリの `og-image.png` を使用 |
+| OGP URL | `scripts/stamp.js` が `og:image` / `twitter:image` に `?v=YYYYMMDD`、`og:url` に `?w=YYYYMMDD` を刻印。値は `meta.updated` |
+| シェアボタン | `?w=YYYYMMDD` 付き URL を共有。Web Share API → クリップボード → X intent の順にフォールバック |
 | favicon | インライン SVG の 🦍 |
-| アクセス解析 | GA4。`index.html` 冒頭の `window.GA_MEASUREMENT_ID` に測定IDを入れると gtag.js を読み込む。空なら何も読み込まない |
-| canonical | `https://nagano-comf.github.io/gorilla-log/` |
+| アクセス解析 | GA4。`index.html` 冒頭の `window.GA_MEASUREMENT_ID` |
+| canonical | `https://nagano-comf.github.io/gorilla-log/`（バージョンなし。検索エンジン向け） |
 
-リポジトリ名や公開先を変える場合、`index.html` 内の canonical・og:url・og:image・twitter:image の4か所を合わせて変更する。
+### 6.1 SNS カードキャッシュの回避
+
+SNS のカードは URL 単位でキャッシュされる（X は約7日、Facebook は約30日）。毎週の更新を反映させるため、**更新日をバージョンとして URL に埋め込み、SNS から見て毎週「別の URL」にする**。
+
+```
+og:image      …/og-image.png?v=20260918    ← 画像URLが変わるので再取得される
+og:url        …/gorilla-log/?w=20260918    ← og:url をキーにする SNS は別ページ扱い
+シェアボタン   …/gorilla-log/?w=20260918    ← 共有URL自体をキーにする X 向け
+```
+
+`?w=` はページ側では無視される（静的サイトなので同じ内容が出る）。canonical はバージョンなしのままにして、検索エンジンの評価は1つの URL に集約する。
+
+残る制約：素の URL を X に貼った場合は古いカードが出ることがある。これは X 側のキャッシュで、サイト側からは強制できない。シェアボタンの URL を使うのが確実。
+
+リポジトリ名や公開先を変える場合、`index.html` 内の canonical・og:url・og:image・twitter:image の4か所を変更する。stamp.js は canonical からサイト URL を読む。
 
 ---
 
@@ -214,9 +234,18 @@ git add -A; git commit -m "week of 2026-09-18"; git push
 
 `profile` の `name` / `age` / `role` / `lead` / `facts[]` を編集。実名・会社名を出すかはここで決める。
 
-### 7.4 OGP画像を作り直す
+### 7.4 OGP画像
 
-1200×630 の PNG を `og-image.png` として上書きして push。X などはカードをキャッシュするため、更新後は Card Validator や共有プレビューで一度読み込ませる。
+通常は何もしなくてよい。push のたびに Actions が `data/records.js` の内容で画像を作り直し、URL にバージョンを付ける。
+
+デザインを変えたいときは `scripts/build-og.js` のテンプレートを編集する。ローカルで確認するには：
+
+```powershell
+node scripts/build-og.js dist/og.html
+& "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=1 --window-size=1200,630 --screenshot="$PWD\og-image.png" "file:///$($PWD -replace '\','/')/dist/og.html"
+```
+
+これで作った `og-image.png` をコミットしておくと、Actions での生成が失敗したときのフォールバックになる。
 
 ### 7.5 GA4 を有効にする
 
@@ -255,7 +284,8 @@ git push
 |---|---|
 | `current directory is not a git repository` | 別フォルダで実行している。先に `cd "C:\Users\comfo\OneDrive\Documents\Workspace\src\training_futsal_gorilla"` |
 | push が認証エラー | `gh auth login -h github.com -w` でブラウザログインし直す |
-| push したのにページが変わらない | GitHub の Actions タブで pages-build-deployment を確認。反映後もブラウザキャッシュが残ることがあるのでスーパーリロード |
+| push したのにページが変わらない | GitHub の Actions タブで「Deploy GORILLA LOG」の結果を確認。失敗していればログの赤い行を見る。反映後もブラウザキャッシュが残ることがあるのでスーパーリロード |
+| OGP 画像が古い | Actions の警告「OGP image generation failed」が出ていないか確認。出ていなければ SNS 側のキャッシュ。シェアボタンの `?w=` 付き URL を使う |
 | ページが真っ白 | `data/records.js` の構文エラー（カンマ抜け・引用符）が典型。ブラウザの開発者ツール Console にエラー行が出る |
 | 新しい記録がカレンダーに出ない | `date` の形式が `YYYY-MM-DD` になっているか、`type` が3種のいずれかか確認 |
 | フットサル合計が増えない | `hours` を書いていない。不明なら意図どおり（合計から除外） |
@@ -280,3 +310,4 @@ git push
 |---|---|
 | 2026-09-11 | 初版。33項目のアーカイブを構造化し、ダッシュボード・OGP・GA4ローダーを実装。GitHub Pages で公開 |
 | 2026-09-18 | R34〜R37 を追加（37項目）。休養タイプ `rest` を導入し採点外として表示。週判定に「今週のひと言」を追加。OGP画像のフットサル合計を37.5hに更新 |
+| 2026-09-18 | 配信を GitHub Actions に切替。OGP 画像を記録データから自動生成し、`og:image` / `og:url` に更新日バージョンを自動刻印。シェアボタンを追加 |

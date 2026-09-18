@@ -1,0 +1,60 @@
+name: Deploy GORILLA LOG
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Japanese and emoji fonts
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk fonts-noto-color-emoji > /dev/null
+          fc-cache -f > /dev/null
+
+      - name: Generate OGP image from records.js
+        id: og
+        continue-on-error: true
+        run: |
+          node scripts/build-og.js dist/og.html
+          google-chrome --headless=new --no-sandbox --disable-gpu --hide-scrollbars \
+            --force-device-scale-factor=1 --window-size=1200,630 --virtual-time-budget=3000 \
+            --screenshot="$PWD/dist/og-image.png" "file://$PWD/dist/og.html"
+          test -s dist/og-image.png
+
+      - name: Fall back to committed og-image.png
+        if: steps.og.outcome != 'success'
+        run: |
+          echo "::warning::OGP image generation failed; using committed og-image.png"
+          mkdir -p dist && cp og-image.png dist/og-image.png
+
+      - name: Stamp version into OGP URLs and assemble _site
+        run: node scripts/stamp.js _site dist/og-image.png
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -295,6 +295,21 @@
     <dl class="facts" style="margin-top:8px"><dt>ベンチプレス</dt><dd>${esc(b.bench)}</dd><dt>スクワット</dt><dd>${esc(b.squat)}</dd><dt>デッドリフト</dt><dd>${esc(b.deadlift)}</dd><dt>当時のレベル</dt><dd>Lv.${lv(b.level)}（暫定）・${esc(b.nickname)}</dd></dl>
     <p style="font-size:13px;color:var(--ink-2);margin-top:10px">同じ日に3種目すべてを実施したと確認できる記録ではないため、「1回のジム」とは数えない。2026年9月のスクワット65kg×10×3を「過去最高」とは呼ばないのは、この70kgの保存メモがあるため。</p>`;
 
+  /* ---------- share（週ごとに別URLにして、SNS のカードキャッシュを避ける） ---------- */
+  (function share() {
+    const ver = (document.querySelector('meta[name="gorilla-version"]') || {}).content || D.meta.updated.replace(/-/g, "");
+    const canonical = (document.querySelector('link[rel="canonical"]') || {}).href || location.href.split(/[?#]/)[0];
+    const url = `${canonical}?w=${ver}`;
+    const text = `${D.meta.siteName}：Lv.${lv(D.meta.overallLevel)} ${D.meta.overallTitle}／今週は「${wk.name}」`;
+    const toast = document.createElement("div"); toast.className = "toast"; toast.setAttribute("role", "status"); document.body.appendChild(toast);
+    const say = (m) => { toast.textContent = m; toast.classList.add("on"); setTimeout(() => toast.classList.remove("on"), 2200); };
+    $("#shareBtn").addEventListener("click", async () => {
+      if (navigator.share) { try { await navigator.share({ title: D.meta.siteName, text, url }); return; } catch (e) { if (e.name === "AbortError") return; } }
+      try { await navigator.clipboard.writeText(url); say("今週のリンクをコピーしました"); }
+      catch (e) { window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, "_blank", "noopener"); }
+    });
+  })();
+
   /* ---------- theme ---------- */
   const root = document.documentElement;
   try { const t = localStorage.getItem("gorilla-theme"); if (t) root.setAttribute("data-theme", t); } catch (e) {}

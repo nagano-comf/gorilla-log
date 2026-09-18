@@ -99,6 +99,9 @@ p{margin:0}
 .pill .dot{width:8px; height:8px; border-radius:50%; background:var(--accent)}
 .theme-btn{font:inherit; font-size:12.5px; padding:4px 10px; border-radius:999px; border:1px solid var(--border); background:var(--surface); color:var(--ink-2); cursor:pointer}
 .theme-btn:hover{background:var(--surface-2)}
+#shareBtn{border-color:var(--accent); color:var(--accent-ink)}
+.toast{position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:var(--ink); color:var(--page); font-size:13px; padding:8px 14px; border-radius:999px; box-shadow:var(--shadow); opacity:0; transition:opacity .15s; pointer-events:none; z-index:10}
+.toast.on{opacity:1}
 
 /* hero */
 .hero{display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:24px; align-items:stretch; padding-block:28px 8px}
@@ -266,6 +269,7 @@ footer{margin-top:40px; padding-top:18px; border-top:1px solid var(--hair); font
   <div class="brand">GORILLA LOG<small id="tagline"></small></div>
   <div class="mast-meta">
     <span class="pill"><span class="dot"></span>最終更新 <span id="updated" class="num"></span></span>
+    <button class="theme-btn" id="shareBtn" type="button" aria-label="このページを共有">シェア</button>
     <button class="theme-btn" id="themeBtn" type="button" aria-label="表示テーマを切り替え">テーマ</button>
   </div>
 </header>

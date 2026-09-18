@@ -7,6 +7,9 @@
 index.html          ページ本体（レイアウト・CSS）
 app.js              描画ロジック（グラフ・一覧・カレンダー）
 data/records.js     ★ 記録データ。毎週ここだけ編集する
+scripts/build-og.js 記録データから OGP 画像用 HTML を生成（Actions が自動実行）
+scripts/stamp.js    OGP の URL に更新日バージョンを刻印して _site/ を組み立て（Actions が自動実行）
+.github/workflows/deploy.yml  push のたびに OGP 生成 → 刻印 → GitHub Pages へデプロイ
 build.js            1ファイル版を dist/ に出力する補助スクリプト（任意）
 md-archive/          ChatGPT から書き出した週次アーカイブ md（公開リポジトリには含めない）
 ```
@@ -18,7 +21,7 @@ md-archive/          ChatGPT から書き出した週次アーカイブ md（公
 2. `records` 配列の **末尾** に今週の記録を追加する（`id` は連番）
 3. 週のまとめを書くなら `weeks` 配列の末尾に1行追加する
 4. `meta.updated` を更新日に書き換える
-5. 保存 → `git add -A && git commit -m "week of 2026-09-18" && git push`
+5. 保存 → `git add -A && git commit -m "week of 2026-09-18" && git push`（OGP 画像の再生成とバージョン刻印は Actions が自動で行う）
 
 ### 記録の書き方（コピペ用）
 
@@ -74,28 +77,35 @@ md-archive/          ChatGPT から書き出した週次アーカイブ md（公
 
 `index.html` をブラウザで開くだけ。サーバー不要。
 
-## 公開（GitHub Pages）
+## 公開（GitHub Pages ＋ Actions）
 
 公開URL: **https://nagano-comf.github.io/gorilla-log/**
-（リポジトリ名を変える場合は `index.html` の canonical / og:url / og:image のURLも合わせて変える）
 
-初回だけ：
+`master` に push すると `.github/workflows/deploy.yml` が動き、次を自動で行う。
 
-```powershell
-gh auth login -h github.com -w        # ブラウザでGitHubにログイン
-gh repo create gorilla-log --public --source . --push
-gh api -X POST repos/nagano-comf/gorilla-log/pages -f build_type=legacy -f "source[branch]=master" -f "source[path]=/"
-```
+1. `data/records.js` から OGP 画像を生成（`scripts/build-og.js` → Chrome でスクリーンショット）
+2. `og:image` と `og:url` に更新日のバージョン（`?v=20260918` / `?w=20260918`）を刻印（`scripts/stamp.js`）
+3. `_site/` を GitHub Pages へデプロイ
 
-数分後に上のURLで公開される。2回目以降は `git push` だけ。
+反映は通常2〜3分。進捗は GitHub の Actions タブで見られる。
+OGP 画像の生成に失敗した場合は、リポジトリにある `og-image.png` をそのまま使う（警告が出るがデプロイは止まらない）。
 
-- `.nojekyll` を置いてあるので、GitHub側でJekyll処理はされない
 - `md-archive/` の元アーカイブは `.gitignore` で公開リポジトリから外している
+- リポジトリ名を変える場合は `index.html` の canonical / og:url / og:image / twitter:image の URL も合わせて変える
 
-## OGP（SNSシェア画像）
+## OGP（SNSシェア画像）とキャッシュ対策
 
-`og-image.png`（1200×630）を同梱。X / LINE / Slack などで共有すると、ゴリラレベルとベンチ・フットサルの数字が出る。
-数字を更新したいときは、画像を作り直して同じファイル名で上書きする。
+SNS はカード情報を URL ごとにキャッシュする。そのため毎週の更新が反映されるよう、次の3段構えにしている。
+
+| 対策 | 仕組み | 効く相手 |
+|---|---|---|
+| 画像URLのバージョン | `og-image.png?v=更新日` を自動刻印 | LINE / Slack / Discord など、画像URLの変化で再取得する側 |
+| og:url のバージョン | `?w=更新日` を自動刻印。SNS から見ると毎週「別ページ」 | Facebook / LINE など og:url をキーにする側 |
+| シェアボタン | 右上「シェア」が `?w=更新日` 付きURLを共有（端末の共有シート → クリップボード → X の順） | X など、共有したページURLをキーにする側 |
+
+素の URL（`?w=` なし）を X に貼ると最大1週間ほど古いカードが出ることがある。**シェアボタンのURLを使えば毎週新しいカードになる。**
+
+OGP 画像の内容（総合レベル・称号・今週の判定・ベンチ・フットサル合計・更新日）は `data/records.js` から自動で組み立てる。手で画像を作り直す必要はない。
 
 ## アクセス解析（Google Analytics 4）
 
