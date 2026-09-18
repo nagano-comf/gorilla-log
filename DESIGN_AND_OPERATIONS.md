@@ -242,7 +242,7 @@ git add -A; git commit -m "week of 2026-09-18"; git push
 
 ```powershell
 node scripts/build-og.js dist/og.html
-& "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=1 --window-size=1200,630 --screenshot="$PWD\og-image.png" "file:///$($PWD -replace '\','/')/dist/og.html"
+& "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=1 --window-size=1200,630 --screenshot="$PWD\og-image.png" "file:///$($PWD -replace '\\','/')/dist/og.html"
 ```
 
 これで作った `og-image.png` をコミットしておくと、Actions での生成が失敗したときのフォールバックになる。
