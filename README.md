@@ -8,11 +8,12 @@ index.html          ページ本体（レイアウト・CSS）
 app.js              描画ロジック（グラフ・一覧・カレンダー）
 data/records.js     ★ 記録データ。毎週ここだけ編集する
 build.js            1ファイル版を dist/ に出力する補助スクリプト（任意）
-training_futsal_gorilla_archive_2026-09-11.md   元になったアーカイブ（ChatGPTメモリ由来）
+md-archive/          ChatGPT から書き出した週次アーカイブ md（公開リポジトリには含めない）
 ```
 
 ## 毎週の更新手順（5分）
 
+0. ChatGPT で更新したアーカイブ md を `md-archive/` に置く（ファイル名の日付で最新版を判別）
 1. `data/records.js` を開く
 2. `records` 配列の **末尾** に今週の記録を追加する（`id` は連番）
 3. 週のまとめを書くなら `weeks` 配列の末尾に1行追加する
@@ -54,7 +55,7 @@ training_futsal_gorilla_archive_2026-09-11.md   元になったアーカイブ�
 | 項目 | 意味 |
 |---|---|
 | `date` | `YYYY-MM-DD`。曜日から推定した日付なら `estimated: true` を付ける（一覧に「推定」、カレンダーに小さな点が出る） |
-| `type` | `gym` / `futsal` / `home` |
+| `type` | `gym` / `futsal` / `home` / `rest`（予定していたジムを休んだ記録。`level` は書かない＝採点外） |
 | `level` | ゴリラレベル 2.0〜5.0、0.5刻み |
 | `provisional` | 数値を画像で確認できていない回は `true`（「暫定」表示） |
 | `hours` | フットサルの参加時間。不明なら書かない（合計から除外される） |
@@ -89,7 +90,7 @@ gh api -X POST repos/nagano-comf/gorilla-log/pages -f build_type=legacy -f "sour
 数分後に上のURLで公開される。2回目以降は `git push` だけ。
 
 - `.nojekyll` を置いてあるので、GitHub側でJekyll処理はされない
-- `training_futsal_gorilla_archive_2026-09-11.md`（元アーカイブ）は `.gitignore` で公開リポジトリから外している
+- `md-archive/` の元アーカイブは `.gitignore` で公開リポジトリから外している
 
 ## OGP（SNSシェア画像）
 

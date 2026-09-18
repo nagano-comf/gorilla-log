@@ -4,8 +4,8 @@
   const D = window.GORILLA_DATA;
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const TYPE = { gym: "ジム", futsal: "フットサル", home: "自宅トレ" };
-  const TYPE_SHORT = { gym: "ジ", futsal: "フ", home: "宅" };
+  const TYPE = { gym: "ジム", futsal: "フットサル", home: "自宅トレ", rest: "休養" };
+  const TYPE_SHORT = { gym: "ジ", futsal: "フ", home: "宅", rest: "休" };
   const DOW = ["日", "月", "火", "水", "木", "金", "土"];
   const parse = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
   const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -58,7 +58,7 @@
     <div class="week-card">
       <div class="week-lv"><small>WEEK LV.</small>${lv(wk.level)}</div>
       <div><div class="week-name">${esc(wk.name)}</div><div class="week-combo">${esc(wk.combo)}</div><div class="week-combo" style="font-size:13px;color:var(--muted)">${esc(wk.note)}</div></div>
-    </div>`;
+    </div>${wk.comment ? `<p class="week-quote">${esc(wk.comment)}</p>` : ""}`;
   const byDate = {};
   records.forEach((r) => { (byDate[r.date] = byDate[r.date] || []).push(r); });
   const stripDays = [];
@@ -67,7 +67,7 @@
   $("#strip").innerHTML = stripDays.map((d) => {
     const rs = byDate[iso(d)] || [];
     const r = rs[0];
-    const t = r ? `<span class="t">${esc(TYPE[r.type])}</span><span>${r.hours != null ? r.hours + "h" : r.sets ? r.sets + "set" : "Lv." + lv(r.level)}</span>` : `<span>休</span>`;
+    const t = r ? `<span class="t">${esc(TYPE[r.type])}</span><span>${r.type === "rest" ? "採点外" : r.hours != null ? r.hours + "h" : r.sets ? r.sets + "set" : "Lv." + lv(r.level)}</span>` : `<span>記録なし</span>`;
     return `<div class="day ${r ? r.type : ""}"><b>${md(d)}</b>${DOW[d.getDay()]}${t}</div>`;
   }).join("");
 
@@ -219,7 +219,7 @@
 
   /* ---------- level timeline ---------- */
   (function levels() {
-    const pts = records.filter((r) => r.date >= "2026-06-01");
+    const pts = records.filter((r) => r.date >= "2026-06-01" && r.level != null);
     const sc = timeScale(pts.map((p) => p.date));
     const y = yScale(1.5, 5);
     let svg = gridY([2, 3, 4, 5], y, (v) => "Lv." + v) + axisX(monthTicks(sc));
@@ -249,7 +249,8 @@
   /* ---------- records ---------- */
   let filter = "all", showAll = false;
   const LIMIT = 8;
-  $("#filters").innerHTML = [["all", "すべて", records.length], ["gym", "ジム", gym.length], ["futsal", "フットサル", futsal.length], ["home", "自宅トレ", home.length]]
+  const rest = records.filter((r) => r.type === "rest");
+  $("#filters").innerHTML = [["all", "すべて", records.length], ["gym", "ジム", gym.length], ["futsal", "フットサル", futsal.length], ["home", "自宅トレ", home.length], ["rest", "休養", rest.length]]
     .map(([k, n, c]) => `<button class="chip" type="button" data-f="${k}" aria-pressed="${k === "all"}">${k !== "all" ? `<i class="sw ${k}"></i>` : ""}${n} <span class="num">${c}</span></button>`).join("");
   function renderRecords() {
     const list = records.slice().reverse().filter((r) => filter === "all" || r.type === filter);
@@ -270,7 +271,7 @@
         <div class="date"><b class="num">${d.getMonth() + 1}/${d.getDate()}</b><span class="dow">${d.getFullYear()}年・${DOW[d.getDay()]}曜${r.estimated ? "・推定" : ""}</span></div>
         <div class="main"><div class="type">${esc(TYPE[r.type])}</div><div class="title">${esc(r.title)}</div><div class="nick">${esc(r.nickname)}</div><p class="note">${esc(r.note)}</p>
           <div class="meta">${tags.map((t) => `<span class="tag">${esc(t)}</span>`).join("")}</div></div>
-        <div class="lv"><b>${lv(r.level)}</b><small>/ 5</small></div>${det}
+        <div class="lv">${r.level == null ? `<b class="na">休</b><small>採点外</small>` : `<b>${lv(r.level)}</b><small>/ 5</small>`}</div>${det}
       </article>`;
     }).join("");
     $("#moreBtn").hidden = showAll || list.length <= LIMIT;

@@ -150,7 +150,7 @@ section{padding-block:30px 6px}
 .sw{width:10px; height:10px; border-radius:50%; flex:none}
 .sw.ring{background:transparent; border:2px solid var(--gym); width:9px; height:9px}
 .sw.sq{border-radius:2px}
-.sw.gym{background:var(--gym)} .sw.futsal{background:var(--futsal)} .sw.home{background:var(--home)}
+.sw.gym{background:var(--gym)} .sw.futsal{background:var(--futsal)} .sw.home{background:var(--home)} .sw.rest{background:transparent; border:2px solid var(--muted); width:8px; height:8px}
 
 /* chart */
 .chart{position:relative}
@@ -178,6 +178,7 @@ td.r,th.r{text-align:right}
 .cal .dh{color:var(--muted); text-align:center; font-weight:500; padding-bottom:2px}
 .cell{aspect-ratio:1; width:100%; border-radius:5px; background:var(--surface-2); display:grid; place-items:center; font-size:11px; font-weight:700; color:var(--ink); position:relative; cursor:default}
 .cell.gym{background:var(--gym); color:#fff} .cell.futsal{background:var(--futsal); color:#fff} .cell.home{background:var(--home); color:#161a17}
+.cell.rest{background:transparent; border:2px solid var(--muted); color:var(--ink-2)}
 .cell.est::after{content:""; position:absolute; right:3px; top:3px; width:5px; height:5px; border-radius:50%; background:var(--surface)}
 .cell.future{background:transparent; border:1px dashed var(--hair)}
 .cell.today{outline:2px solid var(--ink); outline-offset:1px}
@@ -189,10 +190,12 @@ td.r,th.r{text-align:right}
 .week-lv small{font-family:var(--body); font-size:12px; color:var(--muted); display:block; font-weight:700; letter-spacing:.08em}
 .week-name{font-family:var(--display); font-size:20px}
 .week-combo{color:var(--ink-2); font-size:14px}
+.week-quote{margin-top:12px; padding:10px 14px; border-left:3px solid var(--accent); background:var(--surface-2); font-size:13.5px; color:var(--ink-2); border-radius:0 8px 8px 0}
 .strip{display:flex; gap:6px; margin-top:12px; flex-wrap:wrap}
 .strip .day{flex:1 1 0; min-width:40px; border-radius:8px; padding:6px 4px; text-align:center; font-size:11px; background:var(--surface-2); color:var(--muted); line-height:1.3}
 .strip .day b{display:block; font-size:12px; color:var(--ink)}
 .strip .day.gym{background:var(--gym-wash)} .strip .day.futsal{background:var(--futsal-wash)} .strip .day.home{background:var(--home-wash)}
+.strip .day.rest{background:transparent; border:1px dashed var(--muted)}
 .strip .day .t{display:block; font-weight:700; color:var(--ink)}
 
 /* records */
@@ -203,6 +206,8 @@ td.r,th.r{text-align:right}
 .rec-list{display:grid; gap:10px}
 .rec{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 16px; display:grid; grid-template-columns:auto 1fr auto; gap:6px 16px; align-items:start; border-left:4px solid var(--hair)}
 .rec.gym{border-left-color:var(--gym)} .rec.futsal{border-left-color:var(--futsal)} .rec.home{border-left-color:var(--home)}
+.rec.rest{border-left-color:var(--muted); background:var(--surface-2)}
+.rec .lv b.na{font-size:20px; color:var(--muted)}
 .rec .date{font-size:12.5px; color:var(--muted); line-height:1.4; min-width:78px}
 .rec .date b{display:block; font-size:15px; color:var(--ink); font-weight:700}
 .rec .date .dow{font-size:11px}
@@ -297,9 +302,9 @@ footer{margin-top:40px; padding-top:18px; border-top:1px solid var(--hair); font
 </section>
 
 <section aria-labelledby="h-cal">
-  <div class="sec-head"><h2 id="h-cal">活動カレンダー</h2><p>週ごとの運動日。ジ＝ジム、フ＝フットサル、宅＝自宅トレ。右上の小さな点は、曜日から推定した日付。</p></div>
+  <div class="sec-head"><h2 id="h-cal">活動カレンダー</h2><p>週ごとの運動日。ジ＝ジム、フ＝フットサル、宅＝自宅トレ、休＝予定していたジムの休養。右上の小さな点は、曜日から推定した日付。</p></div>
   <div class="card">
-    <div class="legend"><span><i class="sw sq gym"></i>ジム</span><span><i class="sw sq futsal"></i>フットサル</span><span><i class="sw sq home"></i>自宅トレ</span></div>
+    <div class="legend"><span><i class="sw sq gym"></i>ジム</span><span><i class="sw sq futsal"></i>フットサル</span><span><i class="sw sq home"></i>自宅トレ</span><span><i class="sw sq rest"></i>休養（採点外）</span></div>
     <div class="cal" id="cal"></div>
     <p class="cal-note" id="calNote"></p>
   </div>
@@ -331,7 +336,7 @@ footer{margin-top:40px; padding-top:18px; border-top:1px solid var(--hair); font
 </section>
 
 <section aria-labelledby="h-rec">
-  <div class="sec-head"><h2 id="h-rec">全記録</h2><p>新しい順。「暫定」は数値を画像で確認できていない回。日付の「ごろ」は曜日からの推定。</p></div>
+  <div class="sec-head"><h2 id="h-rec">全記録</h2><p>新しい順。「暫定」は数値を画像で確認できていない回。「推定」は曜日から割り出した日付。休養は採点外で、Lv.0として平均を下げない。</p></div>
   <div class="filters" id="filters" role="group" aria-label="種類で絞り込み"></div>
   <div class="rec-list" id="recList"></div>
   <div class="more"><button class="btn" id="moreBtn" type="button">すべて表示</button></div>
