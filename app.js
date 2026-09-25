@@ -4,8 +4,10 @@
   const D = window.GORILLA_DATA;
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const TYPE = { gym: "ジム", futsal: "フットサル", home: "自宅トレ", rest: "休養" };
-  const TYPE_SHORT = { gym: "ジ", futsal: "フ", home: "宅", rest: "休" };
+  const TYPE = { gym: "ジム", futsal: "フットサル", home: "自宅トレ", rest: "休養", cancel: "中止" };
+  const OFF = (t) => t === "rest" || t === "cancel";
+  const COLOR = { gym: "var(--gym)", futsal: "var(--futsal)", home: "var(--home)", rest: "var(--muted)", cancel: "var(--muted)" };
+  const TYPE_SHORT = { gym: "ジ", futsal: "フ", home: "宅", rest: "休", cancel: "止" };
   const DOW = ["日", "月", "火", "水", "木", "金", "土"];
   const parse = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
   const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -66,9 +68,8 @@
   $("#stripRange").textContent = `${md(stripDays[0])}〜${md(stripDays[6])}`;
   $("#strip").innerHTML = stripDays.map((d) => {
     const rs = byDate[iso(d)] || [];
-    const r = rs[0];
-    const t = r ? `<span class="t">${esc(TYPE[r.type])}</span><span>${r.type === "rest" ? "採点外" : r.hours != null ? r.hours + "h" : r.sets ? r.sets + "set" : "Lv." + lv(r.level)}</span>` : `<span>記録なし</span>`;
-    return `<div class="day ${r ? r.type : ""}"><b>${md(d)}</b>${DOW[d.getDay()]}${t}</div>`;
+    const t = rs.length ? rs.map((r) => `<span class="t">${r.session ? r.session + " " : ""}${esc(TYPE[r.type])}</span><span>${OFF(r.type) ? "採点外" : r.hours != null ? r.hours + "h" : r.sets ? r.sets + "set" : "Lv." + lv(r.level)}</span>`).join("") : `<span>記録なし</span>`;
+    return `<div class="day ${rs.length ? rs[0].type : ""}"><b>${md(d)}</b>${DOW[d.getDay()]}${t}</div>`;
   }).join("");
 
   /* ---------- calendar ---------- */
@@ -82,9 +83,11 @@
       for (let i = 0; i < 7; i++) {
         const d = addDays(w, i), k = iso(d), rs = byDate[k] || [];
         const r = rs[0];
-        const cls = ["cell", r ? r.type : "", r && r.estimated ? "est" : "", k > latestDate ? "future" : "", k === latestDate ? "today" : ""].join(" ");
-        const title = r ? `${k}（${DOW[d.getDay()]}）${TYPE[r.type]}：${r.title}` : `${k}（${DOW[d.getDay()]}）記録なし`;
-        html += `<div class="${cls}" title="${esc(title)}" aria-label="${esc(title)}">${r ? TYPE_SHORT[r.type] : ""}</div>`;
+        const multi = rs.length > 1;
+        const cls = ["cell", r ? r.type : "", multi ? "multi" : "", r && r.estimated ? "est" : "", k > latestDate ? "future" : "", k === latestDate ? "today" : ""].join(" ");
+        const title = rs.length ? `${k}（${DOW[d.getDay()]}）` + rs.map((x) => `${x.session ? x.session + " " : ""}${TYPE[x.type]}：${x.title}`).join(" ／ ") : `${k}（${DOW[d.getDay()]}）記録なし`;
+        const style = multi ? ` style="background:linear-gradient(135deg,${COLOR[rs[0].type]} 50%,${COLOR[rs[1].type]} 50%)"` : "";
+        html += `<div class="${cls}"${style} title="${esc(title)}" aria-label="${esc(title)}">${multi ? rs.slice(0, 2).map((x) => TYPE_SHORT[x.type]).join("") : r ? TYPE_SHORT[r.type] : ""}</div>`;
       }
     }
     $("#cal").innerHTML = html;
@@ -227,7 +230,7 @@
     pts.forEach((p, i) => {
       const cx = sc.x(p.date), cy = y(p.level);
       svg += `<circle cx="${cx}" cy="${cy}" r="6.5" fill="var(--surface)"/><circle cx="${cx}" cy="${cy}" r="4.5" fill="var(--${p.type})"/><circle class="hit" data-i="${i}" cx="${cx}" cy="${cy}" r="12"/>`;
-      tips.push(`<b>${dateLabel(p)}・${TYPE[p.type]}</b>Lv.${lv(p.level)}${p.provisional ? "（暫定）" : ""} ${esc(p.nickname)}<br><small>${esc(p.title)}</small>`);
+      tips.push(`<b>${dateLabel(p)}${p.session ? " " + p.session : ""}・${TYPE[p.type]}</b>Lv.${lv(p.level)}${p.provisional ? "（暫定）" : ""} ${esc(p.nickname)}<br><small>${esc(p.title)}</small>`);
     });
     const rows = pts.slice().reverse().map((p) => [dateLabel(p), TYPE[p.type], lv(p.level) + (p.provisional ? " 暫定" : ""), p.nickname]);
     mount("levelChart", svg, tbl([{ t: "日付" }, { t: "種類" }, { t: "Lv.", r: 1 }, { t: "称号" }], rows), tips);
@@ -249,11 +252,11 @@
   /* ---------- records ---------- */
   let filter = "all", showAll = false;
   const LIMIT = 8;
-  const rest = records.filter((r) => r.type === "rest");
-  $("#filters").innerHTML = [["all", "すべて", records.length], ["gym", "ジム", gym.length], ["futsal", "フットサル", futsal.length], ["home", "自宅トレ", home.length], ["rest", "休養", rest.length]]
+  const off = records.filter((r) => OFF(r.type));
+  $("#filters").innerHTML = [["all", "すべて", records.length], ["gym", "ジム", gym.length], ["futsal", "フットサル", futsal.length], ["home", "自宅トレ", home.length], ["off", "休養・中止", off.length]]
     .map(([k, n, c]) => `<button class="chip" type="button" data-f="${k}" aria-pressed="${k === "all"}">${k !== "all" ? `<i class="sw ${k}"></i>` : ""}${n} <span class="num">${c}</span></button>`).join("");
   function renderRecords() {
-    const list = records.slice().reverse().filter((r) => filter === "all" || r.type === filter);
+    const list = records.slice().reverse().filter((r) => filter === "all" || (filter === "off" ? OFF(r.type) : r.type === filter));
     const shown = showAll ? list : list.slice(0, LIMIT);
     $("#recList").innerHTML = shown.map((r) => {
       const d = parse(r.date);
@@ -268,10 +271,10 @@
       if (r.source) tags.push(r.source);
       const det = r.exercises ? `<details><summary>種目の内訳（${r.exercises.length}種目）</summary><ul>${r.exercises.map((e) => `<li>${esc(e)}</li>`).join("")}</ul></details>` : "";
       return `<article class="rec ${r.type}">
-        <div class="date"><b class="num">${d.getMonth() + 1}/${d.getDate()}</b><span class="dow">${d.getFullYear()}年・${DOW[d.getDay()]}曜${r.estimated ? "・推定" : ""}</span></div>
+        <div class="date"><b class="num">${d.getMonth() + 1}/${d.getDate()}</b><span class="dow">${d.getFullYear()}年・${DOW[d.getDay()]}曜${r.session ? "・" + r.session : ""}${r.estimated ? "・推定" : ""}</span></div>
         <div class="main"><div class="type">${esc(TYPE[r.type])}</div><div class="title">${esc(r.title)}</div><div class="nick">${esc(r.nickname)}</div><p class="note">${esc(r.note)}</p>
           <div class="meta">${tags.map((t) => `<span class="tag">${esc(t)}</span>`).join("")}</div></div>
-        <div class="lv">${r.level == null ? `<b class="na">休</b><small>採点外</small>` : `<b>${lv(r.level)}</b><small>/ 5</small>`}</div>${det}
+        <div class="lv">${r.level == null ? `<b class="na">${r.type === "cancel" ? "止" : "休"}</b><small>採点外</small>` : `<b>${lv(r.level)}</b><small>/ 5</small>`}</div>${det}
       </article>`;
     }).join("");
     $("#moreBtn").hidden = showAll || list.length <= LIMIT;

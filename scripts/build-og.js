@@ -39,7 +39,7 @@ body{background:#121714;color:#f1f4ef;font-family:"Noto Sans CJK JP","Noto Sans 
 .lv{font-size:150px;font-weight:900;line-height:1;letter-spacing:-.01em}
 .lv small{font-size:34px;font-weight:700;color:#8b958e;vertical-align:top;position:relative;top:22px;margin-right:6px}
 .title{font-size:54px;font-weight:900;line-height:1.1}
-.week{position:absolute;left:76px;top:478px;font-size:24px;color:#b9c2bb}
+.week{position:absolute;left:76px;top:478px;font-size:24px;color:#b9c2bb;max-width:600px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .week b{color:#f1f4ef;font-weight:900}
 .meter{position:absolute;left:76px;bottom:58px;display:flex;gap:10px}
 .meter span{width:120px;height:16px;border-radius:4px;background:#2f3a33;overflow:hidden;position:relative}
@@ -55,7 +55,7 @@ body{background:#121714;color:#f1f4ef;font-family:"Noto Sans CJK JP","Noto Sans 
 <div class="tag">${esc(D.meta.tagline)}</div>
 <div class="gor">🦍</div>
 <div class="lvwrap"><div class="lv"><small>Lv.</small>${lv.toFixed(1)}</div><div class="title">${esc(D.meta.overallTitle)}</div></div>
-<div class="week">今週：<b>${esc(week.name)}</b>${week.level != null ? `　Lv.${week.level.toFixed(1)}` : ""}　<span style="color:#8b958e">${esc(week.range)}</span></div>
+<div class="week">今週：<b>${esc(week.name)}</b>${week.level != null ? `　Lv.${week.level.toFixed(1)}` : ""}</div>
 <div class="meter">${[1, 2, 3, 4, 5].map((i) => `<span><i style="width:${Math.max(0, Math.min(1, lv - (i - 1))) * 100}%"></i></span>`).join("")}</div>
 <div class="cap">GORILLA LEVEL ${lv.toFixed(1)} / 5</div>
 <div class="stats">${lastBench ? `<b>ベンチ ${lastBench.bench.w}kg</b> ${fmtReps(lastBench.bench)}<br>` : ""}<b>フットサル ${futsalHours}h</b> 記録分の合計</div>
