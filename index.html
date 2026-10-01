@@ -203,6 +203,14 @@ td.r,th.r{text-align:right}
 .strip .day.rest, .strip .day.cancel{background:transparent; border:1px dashed var(--muted)}
 .strip .day .t{display:block; font-weight:700; color:var(--ink)}
 
+/* notices */
+#notices{display:grid; gap:8px; margin-bottom:14px}
+#notices:empty{display:none}
+.notice{border:1px solid var(--border); border-left:4px solid var(--accent); background:var(--surface); border-radius:10px; padding:10px 14px; font-size:13.5px; color:var(--ink-2); display:grid; grid-template-columns:1fr auto; gap:2px 12px; max-width:86ch}
+.notice b{color:var(--ink); font-size:14px}
+.notice span{font-size:12px; color:var(--muted)}
+.notice p{grid-column:1 / -1}
+
 /* records */
 .filters{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px}
 .chip{font:inherit; font-size:13px; padding:5px 12px; border-radius:999px; border:1px solid var(--border); background:var(--surface); color:var(--ink-2); cursor:pointer; display:inline-flex; align-items:center; gap:6px}
@@ -343,6 +351,7 @@ footer{margin-top:40px; padding-top:18px; border-top:1px solid var(--hair); font
 
 <section aria-labelledby="h-rec">
   <div class="sec-head"><h2 id="h-rec">全記録</h2><p>新しい順。「暫定」は数値を画像で確認できていない回。「推定」は曜日から割り出した日付。休養・中止は採点外で、Lv.0として平均を下げない。</p></div>
+  <div id="notices"></div>
   <div class="filters" id="filters" role="group" aria-label="種類で絞り込み"></div>
   <div class="rec-list" id="recList"></div>
   <div class="more"><button class="btn" id="moreBtn" type="button">すべて表示</button></div>

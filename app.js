@@ -149,9 +149,11 @@
   (function bench() {
     const pts = gym.filter((r) => r.bench && r.bench.w);
     const sc = timeScale(pts.map((p) => p.date));
-    const y = yScale(40, 55);
+    const hi = Math.max(55, Math.ceil((Math.max(...pts.map((p) => p.bench.w)) + 1) / 5) * 5);
+    const y = yScale(40, hi);
+    const yt = []; for (let v = 40; v <= hi; v += 5) yt.push(v);
     const line = pts.map((p, i) => `${i ? "L" : "M"}${sc.x(p.date).toFixed(1)},${y(p.bench.w).toFixed(1)}`).join(" ");
-    let svg = gridY([40, 45, 50, 55], y, (v) => v + "kg") + axisX(monthTicks(sc));
+    let svg = gridY(yt, y, (v) => v + "kg") + axisX(monthTicks(sc));
     svg += `<path d="${line}" fill="none" stroke="var(--gym)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
     const tips = [];
     pts.forEach((p, i) => {
@@ -174,9 +176,11 @@
   (function squat() {
     const pts = gym.filter((r) => r.squat && r.squat.w);
     const sc = timeScale(pts.map((p) => p.date));
-    const y = yScale(30, 70);
+    const hi = Math.max(70, Math.ceil((Math.max(...pts.map((p) => p.squat.w)) + 1) / 10) * 10);
+    const y = yScale(30, hi);
+    const yt = []; for (let v = 30; v <= hi; v += 10) yt.push(v);
     const line = pts.map((p, i) => `${i ? "L" : "M"}${sc.x(p.date).toFixed(1)},${y(p.squat.w).toFixed(1)}`).join(" ");
-    let svg = gridY([30, 40, 50, 60, 70], y, (v) => v + "kg") + axisX(monthTicks(sc));
+    let svg = gridY(yt, y, (v) => v + "kg") + axisX(monthTicks(sc));
     svg += `<path d="${line}" fill="none" stroke="var(--gym)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
     const tips = [];
     pts.forEach((p, i) => {
@@ -248,6 +252,9 @@
       el.parentElement.querySelector(".legend")?.toggleAttribute("hidden", on);
     });
   });
+
+  /* ---------- notices（記録全体にかかる注記） ---------- */
+  $("#notices").innerHTML = (D.notices || []).slice().reverse().map((n) => `<div class="notice"><b>注記：${esc(n.title)}</b><span class="num">${esc(n.date.replace(/-/g, "."))}</span><p>${esc(n.body)}</p></div>`).join("");
 
   /* ---------- records ---------- */
   let filter = "all", showAll = false;
