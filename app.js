@@ -303,7 +303,7 @@
   const b = D.baseline;
   $("#baselineCard").innerHTML = `<div class="card-head"><h3>${esc(b.label)}</h3><span class="sub">時系列グラフには載せない基準点</span></div>
     <dl class="facts" style="margin-top:8px"><dt>ベンチプレス</dt><dd>${esc(b.bench)}</dd><dt>スクワット</dt><dd>${esc(b.squat)}</dd><dt>デッドリフト</dt><dd>${esc(b.deadlift)}</dd><dt>当時のレベル</dt><dd>Lv.${lv(b.level)}（暫定）・${esc(b.nickname)}</dd></dl>
-    <p style="font-size:13px;color:var(--ink-2);margin-top:10px">同じ日に3種目すべてを実施したと確認できる記録ではないため、「1回のジム」とは数えない。2026年9月のスクワット65kg×10×3を「過去最高」とは呼ばないのは、この70kgの保存メモがあるため。</p>`;
+    <p style="font-size:13px;color:var(--ink-2);margin-top:10px">同じ日に3種目すべてを実施したと確認できる記録ではないため、「1回のジム」とは数えない。2026年10月22日にスクワット70kg×10×3を画像で確認したが、この2025年の70kgは回数・セット数が不明なため、「生涯初の70kg」「過去最高」とは呼ばない。</p>`;
 
   /* ---------- share（週ごとに別URLにして、SNS のカードキャッシュを避ける） ---------- */
   (function share() {
