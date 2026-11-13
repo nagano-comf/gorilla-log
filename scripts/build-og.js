@@ -55,7 +55,7 @@ body{background:#121714;color:#f1f4ef;font-family:"Noto Sans CJK JP","Noto Sans 
 <div class="tag">${esc(D.meta.tagline)}</div>
 <div class="gor">🦍</div>
 <div class="lvwrap"><div class="lv"><small>Lv.</small>${lv.toFixed(1)}</div><div class="title">${esc(D.meta.overallTitle)}</div></div>
-<div class="week">今週：<b>${esc(week.name)}</b>${week.level != null ? `　Lv.${week.level.toFixed(1)}` : ""}</div>
+<div class="week"${week.name.length > 15 ? ' style="font-size:19px"' : ""}>今週：<b>${esc(week.name)}</b>${week.level != null ? `　Lv.${week.level.toFixed(1)}` : ""}</div>
 <div class="meter">${[1, 2, 3, 4, 5].map((i) => `<span><i style="width:${Math.max(0, Math.min(1, lv - (i - 1))) * 100}%"></i></span>`).join("")}</div>
 <div class="cap">GORILLA LEVEL ${lv.toFixed(1)} / 5</div>
 <div class="stats">${lastBench ? `<b>ベンチ ${lastBench.bench.w}kg</b> ${fmtReps(lastBench.bench)}<br>` : ""}<b>フットサル ${futsalHours}h</b> 記録分の合計</div>
