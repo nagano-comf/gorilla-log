@@ -58,7 +58,7 @@ md-archive/          ChatGPT から書き出した週次アーカイブ md（公
 | 項目 | 意味 |
 |---|---|
 | `date` | `YYYY-MM-DD`。曜日から推定した日付なら `estimated: true` を付ける（一覧に「推定」、カレンダーに小さな点が出る） |
-| `type` | `gym` / `futsal` / `home` / `rest`（ジムの休養）/ `cancel`（天候などによる中止）。`rest` と `cancel` は `level` を書かない＝採点外 |
+| `type` | `gym` / `futsal` / `home` / `rest`（体調などによる休養。ジム・フットサル・自宅トレのどれでも）/ `cancel`（天候などによる中止）。`rest` と `cancel` は `level` を書かない＝採点外 |
 | `session` | 同じ日に2セッションある場合だけ `"AM"` / `"PM"` を付ける。カレンダーは2色セル、直近7日は2段で表示 |
 | `level` | ゴリラレベル 2.0〜5.0、0.5刻み |
 | `provisional` | 数値を画像で確認できていない回は `true`（「暫定」表示） |
